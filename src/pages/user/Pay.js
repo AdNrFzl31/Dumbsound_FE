@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Button, Container, Form, InputGroup } from "react-bootstrap"
 import Navs from "../../component/navbar/Navbar"
@@ -42,7 +42,25 @@ const style = {
 
 function Pay() {
   const navigate = useNavigate()
-  // const [state, dispatch] = useContext(UserContext)
+  const [state, dispatch] = useContext(UserContext)
+  const [trans, setTrans] = useState([])
+  const id = state.user.id
+
+  const getTrans = async () => {
+    try {
+      const response = await API.get("/transall")
+      const responbyid = response?.data.data.filter((p) => p.user.id === id)
+      console.log("byiid", responbyid)
+      setTrans(responbyid)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  console.log(trans, "okeeeeeeeee")
+  useEffect(() => {
+    getTrans()
+  }, [state])
+  console.log("state:", state)
 
   const HandlePay = useMutation(async (e) => {
     try {
@@ -52,7 +70,7 @@ function Pay() {
       console.log("Transaction : ", response)
 
       const token = response.data.data.token
-      // console.log(token)
+      console.log(token)
 
       window.snap.pay(token, {
         onSuccess: function (result) {
@@ -102,37 +120,37 @@ function Pay() {
   return (
     <>
       <Navs />
-      {/* {test === false ? ( */}
-      <Container fluid>
-        <h3 style={style.header} className="text-center pt-5 pb-4 ">
-          Premium
-        </h3>
-        <div className="my-3 text-center">
-          <p style={style.textWhite}>
-            Bayar sekarang dan nikmati streaming music yang kekinian dari{" "}
-            <label className="fw-bold">
-              <label style={style.textDumb}>DUMB</label>SOUND
-            </label>
-          </p>
-          <p style={style.textWhite}>
-            <label className="fw-bold">
-              <label style={style.textDumb}>DUMB</label>SOUND
-            </label>{" "}
-            : 0981312323
-          </p>
-        </div>
-        <div className="d-flex justify-content-center">
-          <Button
-            style={style.bgButton}
-            className="my-4 fw-bold"
-            type="submit"
-            onClick={(e) => HandlePay.mutate(e)}
-          >
-            Pay
-          </Button>
-        </div>
-      </Container>
-      {/* ) : (
+      {trans.length === 0 ? (
+        <Container fluid>
+          <h3 style={style.header} className="text-center pt-5 pb-4 ">
+            Premium
+          </h3>
+          <div className="my-3 text-center">
+            <p style={style.textWhite}>
+              Bayar sekarang dan nikmati streaming music yang kekinian dari{" "}
+              <label className="fw-bold">
+                <label style={style.textDumb}>DUMB</label>SOUND
+              </label>
+            </p>
+            <p style={style.textWhite}>
+              <label className="fw-bold">
+                <label style={style.textDumb}>DUMB</label>SOUND
+              </label>{" "}
+              : 0981312323
+            </p>
+          </div>
+          <div className="d-flex justify-content-center">
+            <Button
+              style={style.bgButton}
+              className="my-4 fw-bold"
+              type="submit"
+              onClick={(e) => HandlePay.mutate(e)}
+            >
+              Pay
+            </Button>
+          </div>
+        </Container>
+      ) : (
         <Container fluid>
           <h3 style={style.header} className="text-center pt-5 pb-4 ">
             Anda Sudah Premium
@@ -162,7 +180,7 @@ function Pay() {
             </Button>
           </div>
         </Container>
-      )} */}
+      )}
     </>
   )
 }

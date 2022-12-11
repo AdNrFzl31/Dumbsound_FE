@@ -1,8 +1,11 @@
-import React from "react"
+import React, { useContext } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Container, Table } from "react-bootstrap"
 import Navs from "../../component/navbar/Navbar"
 import DropdownApprove from "../../component/dropdown/DropdownApprove"
+import { useQuery } from "react-query"
+import { API } from "../../confiq/api"
+import { UserContext } from "../../context/UserContext"
 
 const style = {
   header: {
@@ -27,6 +30,13 @@ const style = {
 }
 
 function Income() {
+  const [state, dispatch] = useContext(UserContext)
+  let { data: transall, refetch } = useQuery("TransTable", async () => {
+    if (state.user.status === "admin") {
+      const response = await API.get("/transall")
+      return response.data.data
+    }
+  })
   return (
     <>
       <Navs />
@@ -46,23 +56,41 @@ function Income() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th>No</th>
-              <th>Users</th>
-              <th>Remaining Active</th>
-              <th>
-                <label style={style.active}>Active</label>
-                <label style={style.notActive}>Not Active</label>
-              </th>
-              <th>
-                <label style={style.pending}>Panding</label>
-                <label style={style.active}>Success</label>
-                <label style={style.notActive}>Cancel</label>
-              </th>
-              <th>
-                <DropdownApprove />
-              </th>
-            </tr>
+            {transall === 0 ? (
+              <tr>
+                <td colSpan={6}>Not Transaction</td>
+              </tr>
+            ) : (
+              transall?.map((element, number) => {
+                number += 1
+                // remaining = element.starDate - element.dueDate
+                // console.log(remaining)
+
+                return (
+                  <tr>
+                    <th>{number}</th>
+                    <th>{element.user.fullname}</th>
+                    <th>{}</th>
+                    <th>
+                      <label style={style.active}>Active</label>
+                      <label style={style.notActive}>Not Active</label>
+                    </th>
+                    <th>
+                      {element.status === "pending" ? (
+                        <label style={style.pending}>Pending</label>
+                      ) : element.status === "Success" ? (
+                        <label style={style.active}>Success</label>
+                      ) : element.status === "Cancel" ? (
+                        <label style={style.notActive}>Cancel</label>
+                      ) : null}
+                    </th>
+                    <th>
+                      <DropdownApprove />
+                    </th>
+                  </tr>
+                )
+              })
+            )}
             <tr>
               <td style={style.headerTable} colSpan={6}>
                 Income :{" "}
