@@ -41,7 +41,7 @@ function Navs() {
   const [showSignin, setShowSignin] = useState(false)
   const [showRegister, setShowRegister] = useState(false)
 
-  console.log("data state navs : ", state.user)
+  // console.log("data state navs : ", state.user)
 
   let navigate = useNavigate()
 

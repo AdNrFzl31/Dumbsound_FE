@@ -37,6 +37,14 @@ function Income() {
       return response.data.data
     }
   })
+
+  const formatIDR = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  })
+  let income = 0
+
   return (
     <>
       <Navs />
@@ -63,8 +71,10 @@ function Income() {
             ) : (
               transall?.map((element, number) => {
                 number += 1
-                // remaining = element.starDate - element.dueDate
-                // console.log(remaining)
+                if (element.status === "Success") {
+                  income += element.price
+                  console.log("income : ", element.price)
+                }
 
                 return (
                   <tr>
@@ -93,7 +103,7 @@ function Income() {
             )}
             <tr>
               <td style={style.headerTable} colSpan={6}>
-                Income :{" "}
+                Income : {formatIDR.format(income)}
               </td>
             </tr>
           </tbody>
