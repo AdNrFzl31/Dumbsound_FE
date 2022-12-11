@@ -17,6 +17,10 @@ const style = {
     color: "#0ACF83",
   },
 
+  pending: {
+    color: "#F7941E",
+  },
+
   notActive: {
     color: "#FF0000",
   },
@@ -46,10 +50,14 @@ function Income() {
               <th>No</th>
               <th>Users</th>
               <th>Remaining Active</th>
-              <th>Status User</th>
               <th>
                 <label style={style.active}>Active</label>
-                <label style={style.notActive}> Not Active</label>
+                <label style={style.notActive}>Not Active</label>
+              </th>
+              <th>
+                <label style={style.pending}>Panding</label>
+                <label style={style.active}>Success</label>
+                <label style={style.notActive}>Cancel</label>
               </th>
               <th>
                 <DropdownApprove />

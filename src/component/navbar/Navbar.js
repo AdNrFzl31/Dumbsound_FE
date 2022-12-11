@@ -9,6 +9,8 @@ import Signin from "../auth/Signin"
 import Register from "../auth/Register"
 import { UserContext } from "../../context/UserContext"
 import { useNavigate } from "react-router-dom"
+import { useQuery } from "react-query"
+import { API } from "../../confiq/api"
 
 const style = {
   navTransparant: {
@@ -30,8 +32,16 @@ const style = {
 
 function Navs() {
   const [state, dispatch] = useContext(UserContext)
+  // let { data: user } = useQuery("userCache", async () => {
+  //   const response = await API.get("/user/" + state.user.id)
+  //   return response.data.data
+  // })
+  // console.log("data user: ", user)
+
   const [showSignin, setShowSignin] = useState(false)
   const [showRegister, setShowRegister] = useState(false)
+
+  console.log("data state navs : ", state.user)
 
   let navigate = useNavigate()
 
@@ -46,20 +56,37 @@ function Navs() {
     <Navbar collapseOnSelect expand="lg" style={style.navTransparant}>
       <Container fluid className="px-5 py-2">
         <Navbar.Brand href="/">
-          {/* <img
-            alt=""
-            src={LogoPremium}
-            width="50%"
-            // height="50"
-            className="d-inline-block align-top"
-          /> */}
-          <img
-            alt=""
-            src={Logo}
-            width="50%"
-            // height="50"
-            className="d-inline-block align-top"
-          />
+          {state.isLogin === false ? (
+            <img
+              alt=""
+              src={Logo}
+              width="50%"
+              // height="50"
+              className="d-inline-block align-top"
+            />
+          ) : (
+            <>
+              {state.user.subscribe === "false" ? (
+                // logo biasa
+                <img
+                  alt=""
+                  src={Logo}
+                  width="50%"
+                  // height="50"
+                  className="d-inline-block align-top"
+                />
+              ) : (
+                // logo premium
+                <img
+                  alt=""
+                  src={LogoPremium}
+                  width="50%"
+                  // height="50"
+                  className="d-inline-block align-top"
+                />
+              )}
+            </>
+          )}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse

@@ -1,11 +1,14 @@
-import React, { useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Card, Col, Container, Row, Stack } from "react-bootstrap"
 import Music from "../../asset/image/Music.png"
 import Audio from "../audio/Audio"
-import { Link } from "react-router-dom"
-import { useQuery } from "react-query"
+import { Link, useNavigate } from "react-router-dom"
+import { useMutation, useQuery } from "react-query"
 import { API } from "../../confiq/api"
+import { UserContext } from "../../context/UserContext"
+import Signin from "../auth/Signin"
+import Register from "../auth/Register"
 
 const style = {
   Card: {
@@ -22,13 +25,27 @@ const style = {
   },
 }
 function ListMusic() {
-  const [audioShow, setAudioShow] = useState(false)
+  const navigate = useNavigate()
+  const [state, dispatch] = useContext(UserContext)
+  const [showSignin, setShowSignin] = useState(false)
+  const [showRegister, setShowRegister] = useState(false)
 
-  let { data: musics } = useQuery("musicCache", async () => {
+  let { data: musics, refetch } = useQuery("musicCache", async () => {
     const response = await API.get("/musics")
     return response.data.data
   })
-  console.log("data music : ", musics)
+  // console.log("data music : ", musics)
+
+  const [audioShow, setAudioShow] = useState(false)
+  const handleClose = () => setAudioShow(false)
+  const handleShow = () => setAudioShow(true)
+  const [dataAudio, setDataAudio] = useState()
+
+  const handleMusicDetail = (data) => {
+    setDataAudio(data)
+    handleShow()
+  }
+  // console.log(dataAudio)
 
   return (
     <div className="my-5 p-0">
@@ -36,57 +53,44 @@ function ListMusic() {
         Dengarkan Dan Rasakan
       </h4>
       <Row className="d-flex gap-4 justify-content-center">
-        {/* d-flex gap-4 */}
-        {/* <>
+        {musics?.map((music) => (
           <Card
             style={style.Card}
             // className="btn"
-            onClick={() => setAudioShow(true)}
+            onClick={() => {
+              state.isLogin === false
+                ? setShowSignin(true)
+                : state.user.subscribe === "false"
+                ? navigate("/Pay")
+                : handleMusicDetail(music)
+            }}
           >
-            <Card.Img variant="top" src={Music} className="p-4 pb-2" />
+            <Card.Img variant="top" src={music.tumbnail} className="p-4 pb-2" />
             <Card.Body className="p-4 pt-3">
               <Stack direction="horizontal" className="justify-content-between">
-                <Card.Title style={style.colorWhite}>Evaluasi</Card.Title>
-                <Card.Title style={style.colorWhite}>2022</Card.Title>
+                <Card.Title style={style.colorWhite}>{music.title}</Card.Title>
+                <Card.Title style={style.colorWhite}>{music.year}</Card.Title>
               </Stack>
-              <Card.Text style={style.colorWhite}>Hindia</Card.Text>
+              <Card.Text style={style.colorWhite}>
+                {music.artist.name}
+              </Card.Text>
             </Card.Body>
           </Card>
-        </> */}
-        {musics?.map((music) => (
-          <>
-            <Card
-              style={style.Card}
-              // className="btn"
-              onClick={() => setAudioShow(true)}
-            >
-              <Card.Img
-                variant="top"
-                src={music.tumbnail}
-                className="p-4 pb-2"
-              />
-              <Card.Body className="p-4 pt-3">
-                <Stack
-                  direction="horizontal"
-                  className="justify-content-between"
-                >
-                  <Card.Title style={style.colorWhite}>
-                    {music.title}
-                  </Card.Title>
-                  <Card.Title style={style.colorWhite}>{music.year}</Card.Title>
-                </Stack>
-                <Card.Text style={style.colorWhite}>
-                  {music.artist.name}
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <Audio
-              show={audioShow}
-              musicId={music.id}
-              onHide={() => setAudioShow(false)}
-            />
-          </>
         ))}
+
+        <Audio show={audioShow} onHide={handleClose} dataAudio={dataAudio} />
+        <Signin
+          show={showSignin}
+          onHide={() => setShowSignin(false)}
+          setShowSignin={setShowSignin}
+          setShowRegister={setShowRegister}
+        />
+        <Register
+          show={showRegister}
+          onHide={() => setShowRegister(false)}
+          setShowSignin={setShowSignin}
+          setShowRegister={setShowRegister}
+        />
       </Row>
     </div>
   )

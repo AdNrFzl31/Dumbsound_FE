@@ -44,7 +44,7 @@ function Signin({ show, onHide, setShowSignin, setShowRegister }) {
   const title = "Login"
   document.title = "Waysbucks | " + title
 
-  let navigate = useNavigate()
+  // let navigate = useNavigate()
 
   const [state, dispatch] = useContext(UserContext)
 

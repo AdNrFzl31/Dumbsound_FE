@@ -19,15 +19,7 @@ const style = {
   },
 }
 
-function Audio({ show, onHide, musicId }) {
-  // const { id } = useParams()
-
-  let { data: musics } = useQuery("musicDetailCache", async () => {
-    const response = await API.get("/music/" + musicId)
-    return response.data.data
-  })
-  // console.log(id)
-
+function Audio({ show, onHide, dataAudio }) {
   return (
     <Modal
       show={show}
@@ -38,15 +30,15 @@ function Audio({ show, onHide, musicId }) {
     >
       <Modal.Body>
         <Stack direction="horizontal" gap={3}>
-          <img alt="" src={musics?.tumbnail} style={style.imgMusic} />
+          <img alt="" src={dataAudio?.tumbnail} style={style.imgMusic} />
           <Stack direction="vertical">
             <p>
-              {musics?.title} - {musics?.artist.name}
+              {dataAudio?.title} - {dataAudio?.artist.name}
             </p>
             <Stack direction="horizontal">
               <AudioPlayer
                 autoPlay
-                src={musics?.music}
+                src={dataAudio?.music}
                 layout="horizontal"
                 className="player"
               />

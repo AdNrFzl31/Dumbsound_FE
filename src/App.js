@@ -72,7 +72,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/pay" element={<Pay />} />
-            <Route path="/admin" element={<Income />} />
             <Route path="/addMusic" element={<AddMusic />} />
             <Route path="/addArtist" element={<AddArtist />} />
           </Routes>
