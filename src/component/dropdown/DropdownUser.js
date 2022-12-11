@@ -4,6 +4,7 @@ import { Nav, OverlayTrigger, Popover } from "react-bootstrap"
 import Profile from "../../asset/image/Profile1.png"
 import Pay from "../../asset/image/icon/bill.png"
 import Logout from "../../asset/image/icon/logout.png"
+import { useNavigate } from "react-router-dom"
 
 const style = {
   bgDropdown: {
@@ -13,6 +14,7 @@ const style = {
   link: {
     fontWeight: "600",
     fontSize: "17px",
+    color: "white",
     alignItems: "center",
   },
 
@@ -40,48 +42,43 @@ const style = {
     height: "60px",
     borderRadius: "50%",
     objectFit: "cover",
-    border: "2px solid #bd0707",
+    border: "1px solid #FFFFFF",
   },
 }
 
-const popover = (
-  <Popover id="popover-basic" style={style.bgDropdown}>
-    <Popover.Body>
-      <Nav.Link
-        // onClick={}
-        style={style.link}
-      >
-        <img alt="" src={Pay} style={style.imgPay} />
-        Pay
-      </Nav.Link>
-    </Popover.Body>
-    <hr style={style.line} />
-    <Popover.Body>
-      <Nav.Link
-        // onClick={logout}
-        style={style.link}
-      >
-        <img alt="" src={Logout} style={style.imgLogout} />
-        Logout
-      </Nav.Link>
-    </Popover.Body>
-  </Popover>
-)
-
-const DropdownUser = () => (
-  <OverlayTrigger
-    trigger="click"
-    placement="bottom-end"
-    overlay={popover}
-    style={style.trigger}
-  >
-    <img
-      alt=""
-      src={Profile}
-      className="d-inline-block align-top btn p-0 m-auto"
-      style={style.imgProfile}
-    />
-  </OverlayTrigger>
-)
+function DropdownUser({ logout }) {
+  let navigate = useNavigate()
+  return (
+    <OverlayTrigger
+      trigger="click"
+      placement="bottom-end"
+      overlay={
+        <Popover id="popover-basic" style={style.bgDropdown}>
+          <Popover.Body>
+            <Nav.Link href="/pay" style={style.link}>
+              <img alt="" src={Pay} style={style.imgPay} />
+              Pay
+            </Nav.Link>
+          </Popover.Body>
+          <hr style={style.line} />
+          <Popover.Body onClick={logout}>
+            <Nav.Link style={style.link}>
+              <img alt="" src={Logout} style={style.imgLogout} />
+              Logout
+            </Nav.Link>
+          </Popover.Body>
+        </Popover>
+      }
+      style={style.trigger}
+    >
+      <img
+        alt=""
+        src={Profile}
+        className="d-inline-block align-top btn p-0 m-auto"
+        style={style.imgProfile}
+      />
+    </OverlayTrigger>
+  )
+}
 
 export default DropdownUser

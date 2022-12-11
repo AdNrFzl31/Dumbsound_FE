@@ -5,6 +5,9 @@ import imgMusic from "../../asset/image/Music.png"
 import Music from "../../asset/audio/Hindia-Evaluasi.mp3"
 import AudioPlayer from "react-h5-audio-player"
 import "react-h5-audio-player/lib/styles.css"
+import { useParams } from "react-router-dom"
+import { useQuery } from "react-query"
+import { API } from "../../confiq/api"
 
 const style = {
   imgMusic: {
@@ -16,7 +19,15 @@ const style = {
   },
 }
 
-function Audio({ show, onHide }) {
+function Audio({ show, onHide, musicId }) {
+  // const { id } = useParams()
+
+  let { data: musics } = useQuery("musicDetailCache", async () => {
+    const response = await API.get("/music/" + musicId)
+    return response.data.data
+  })
+  // console.log(id)
+
   return (
     <Modal
       show={show}
@@ -27,13 +38,15 @@ function Audio({ show, onHide }) {
     >
       <Modal.Body>
         <Stack direction="horizontal" gap={3}>
-          <img alt="" src={imgMusic} style={style.imgMusic} />
+          <img alt="" src={musics?.tumbnail} style={style.imgMusic} />
           <Stack direction="vertical">
-            <p>Evaluasi - Hindia</p>
+            <p>
+              {musics?.title} - {musics?.artist.name}
+            </p>
             <Stack direction="horizontal">
               <AudioPlayer
                 autoPlay
-                src={Music}
+                src={musics?.music}
                 layout="horizontal"
                 className="player"
               />

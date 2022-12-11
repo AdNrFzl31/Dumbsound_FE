@@ -1,7 +1,9 @@
-import React from "react"
+import React, { useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
-import { Button, FloatingLabel, Form, Modal } from "react-bootstrap"
+import { Alert, Button, FloatingLabel, Form, Modal } from "react-bootstrap"
 import { Link } from "react-router-dom"
+import { useMutation } from "react-query"
+import { API } from "../../confiq/api"
 
 const style = {
   bg: {
@@ -45,64 +47,122 @@ const style = {
     height: "100px",
     resize: "none",
     backgroundColor: "#454545",
+    color: "#b9b9b9",
     border: "2px solid #D2D2D2",
   },
 }
 
 function Register({ show, onHide, setShowSignin, setShowRegister }) {
+  const title = "Register"
+  document.title = "Waysbucks | " + title
+
+  const [message, setMessage] = useState(null)
+  // const [preview, setPreview] = useState(null)
+  const [dataRegis, setDataRegis] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+    gender: "",
+    phone: "",
+    address: "",
+  })
+
+  const handleOnChange = (e) => {
+    setDataRegis({
+      ...dataRegis,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault()
+
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      }
+
+      const body = JSON.stringify(dataRegis)
+
+      const response = await API.post("/register", body, config)
+      console.log(response)
+      setShowRegister(false)
+      setShowSignin(true)
+    } catch (error) {
+      const alert = (
+        <Alert variant="danger" className="py-1">
+          Failed
+        </Alert>
+      )
+      setMessage(alert)
+      console.log(error)
+    }
+  })
+
   return (
     <Modal show={show} onHide={onHide} size="md" centered>
       <Modal.Body className="bg-dark">
         <Modal.Title style={style.header} className="mb-3">
           Register
         </Modal.Title>
-        {/* {message && message} */}
+        {message && message}
         <Form
-          // onSubmit={(e) => handleSubmit.mutate(e)}
+          onSubmit={(e) => handleSubmit.mutate(e)}
           className="w-100 m-auto mt-3 d-grid gap-2"
         >
           <Form.Group className="mb-3 " controlId="email">
             <Form.Control
-              // onChange={handleOnChange}
+              onChange={handleOnChange}
               // value={dataRegister.email}
-              // name="email"
+              name="email"
               style={style.form}
               type="email"
               placeholder="Email"
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="password">
             <Form.Control
-              // onChange={handleOnChange}
+              onChange={handleOnChange}
               // value={dataRegister.password}
-              // name="password"
+              name="password"
               style={style.form}
               type="password"
               placeholder="Password"
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="fullname">
             <Form.Control
-              // onChange={handleOnChange}
+              onChange={handleOnChange}
               // value={dataRegister.fullname}
-              // name="fullname"
+              name="fullname"
               style={style.form}
               type="text"
               placeholder="Fullname"
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Select style={style.form}>
+            <Form.Select
+              style={style.form}
+              aria-label="Default select example"
+              onChange={handleOnChange}
+              name="gender"
+            >
               <option hidden>Gender</option>
-              <option>Male</option>
-              <option>Female</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              onChange={handleOnChange}
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3" controlId="phone">
             <Form.Control
-              // onChange={handleOnChange}
+              onChange={handleOnChange}
               // value={dataRegister.phone}
-              // name="phone"
+              name="phone"
               style={style.form}
               type="number"
               placeholder="Phone"
@@ -115,9 +175,9 @@ function Register({ show, onHide, setShowSignin, setShowRegister }) {
             label="Address"
           >
             <Form.Control
-              // onChange={handleOnChange}
+              onChange={handleOnChange}
               // value={DataPay.address}
-              // name="address"
+              name="address"
               as="textarea"
               placeholder="Address"
               style={style.formTextarea}

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Button, Container, Nav, Navbar, Stack } from "react-bootstrap"
 import DropdownAdmin from "../dropdown/DropdownAdmin"
@@ -7,6 +7,8 @@ import Logo from "../../asset/image/icon/Logo3.png"
 import LogoPremium from "../../asset/image/icon/LogoPremium.png"
 import Signin from "../auth/Signin"
 import Register from "../auth/Register"
+import { UserContext } from "../../context/UserContext"
+import { useNavigate } from "react-router-dom"
 
 const style = {
   navTransparant: {
@@ -27,14 +29,23 @@ const style = {
 }
 
 function Navs() {
+  const [state, dispatch] = useContext(UserContext)
   const [showSignin, setShowSignin] = useState(false)
   const [showRegister, setShowRegister] = useState(false)
+
+  let navigate = useNavigate()
+
+  const logout = () => {
+    dispatch({
+      type: "LOGOUT",
+    })
+    navigate("/")
+  }
 
   return (
     <Navbar collapseOnSelect expand="lg" style={style.navTransparant}>
       <Container fluid className="px-5 py-2">
         <Navbar.Brand href="/">
-          {/* <Nav.Link href="/"> */}
           {/* <img
             alt=""
             src={LogoPremium}
@@ -49,7 +60,6 @@ function Navs() {
             // height="50"
             className="d-inline-block align-top"
           />
-          {/* </Nav.Link> */}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse
@@ -58,53 +68,52 @@ function Navs() {
         >
           <Nav className="me-auto"></Nav>
           <Nav>
-            {/* {state.isSignin === false ? ( */}
-            {/* <> */}
-            <Button
-              className="px-5 me-4"
-              size="sm"
-              variant="outline-danger"
-              style={style.btnOutline}
-              onClick={() => setShowSignin(true)}
-            >
-              Signin
-            </Button>
-            <Button
-              className="px-5 "
-              size="sm"
-              variant="outline-none"
-              style={style.btnColor}
-              onClick={() => setShowRegister(true)}
-            >
-              Register
-            </Button>
+            {state.isLogin === false ? (
+              <>
+                <Button
+                  className="px-5 me-4"
+                  size="sm"
+                  variant="outline-danger"
+                  style={style.btnOutline}
+                  onClick={() => setShowSignin(true)}
+                >
+                  Signin
+                </Button>
+                <Button
+                  className="px-5 "
+                  size="sm"
+                  variant="outline-none"
+                  style={style.btnColor}
+                  onClick={() => setShowRegister(true)}
+                >
+                  Register
+                </Button>
 
-            <Signin
-              show={showSignin}
-              onHide={() => setShowSignin(false)}
-              setShowSignin={setShowSignin}
-              setShowRegister={setShowRegister}
-            />
-            <Register
-              show={showRegister}
-              onHide={() => setShowRegister(false)}
-              setShowSignin={setShowSignin}
-              setShowRegister={setShowRegister}
-            />
-            {/* </> */}
-            {/* // ) : (
-        // <> */}
-            {/* {state.user.role === "admin" ? ( */}
-            {/* // Navbar Admin */}
-            {/* <DropdownAdmin /> */}
-            {/* ) : ( */}
-            {/* // Navbar User */}
-            {/* <DropdownUser */}
-            {/* // userDropdown={userDropdown} logOut={logOut}
-        /> */}
-            {/* )} */}
-            {/* </> */}
-            {/* )} */}
+                <Signin
+                  show={showSignin}
+                  onHide={() => setShowSignin(false)}
+                  setShowSignin={setShowSignin}
+                  setShowRegister={setShowRegister}
+                />
+                <Register
+                  show={showRegister}
+                  onHide={() => setShowRegister(false)}
+                  setShowSignin={setShowSignin}
+                  setShowRegister={setShowRegister}
+                />
+              </>
+            ) : (
+              <>
+                {state.user.status === "admin" ? (
+                  // Navbar Admin
+                  <DropdownAdmin logout={logout} />
+                ) : (
+                  // Navbar User
+                  <DropdownUser logout={logout} />
+                  // userDropdown={userDropdown} logOut={logOut}
+                )}
+              </>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -5,6 +5,7 @@ import Profile from "../../asset/image/Profile1.png"
 import AddMusic from "../../asset/image/icon/music.png"
 import AddArtist from "../../asset/image/icon/people.png"
 import Logout from "../../asset/image/icon/logout.png"
+import { useNavigate } from "react-router-dom"
 
 const style = {
   bgDropdown: {
@@ -47,56 +48,48 @@ const style = {
     height: "60px",
     borderRadius: "50%",
     objectFit: "cover",
-    border: "2px solid #bd0707",
+    border: "1px solid #FFFFFF",
   },
 }
 
-const popover = (
-  <Popover id="popover-basic" style={style.bgDropdown}>
-    <Popover.Body>
-      <Nav.Link
-        // onClick={}
-        style={style.link}
-      >
-        <img alt="" src={AddMusic} style={style.imgAddMusic} />
-        Add Music
-      </Nav.Link>
-      <Nav.Link
-        // onClick={}
-        className="mt-4"
-        style={style.link}
-      >
-        <img alt="" src={AddArtist} style={style.imgAddArtist} />
-        Add Artist
-      </Nav.Link>
-    </Popover.Body>
-    <hr style={style.line} />
-    <Popover.Body>
-      <Nav.Link
-        // onClick={logout}
-        style={style.link}
-      >
-        <img alt="" src={Logout} style={style.imgLogout} />
-        Logout
-      </Nav.Link>
-    </Popover.Body>
-  </Popover>
-)
+function DropdownAdmin({ logout }) {
+  let navigate = useNavigate()
 
-const DropdownAdmin = () => (
-  <OverlayTrigger
-    trigger="click"
-    placement="bottom-end"
-    overlay={popover}
-    style={style.trigger}
-  >
-    <img
-      alt=""
-      src={Profile}
-      className="d-inline-block align-top btn p-0 m-auto"
-      style={style.imgProfile}
-    />
-  </OverlayTrigger>
-)
+  return (
+    <OverlayTrigger
+      trigger="click"
+      placement="bottom-end"
+      overlay={
+        <Popover id="popover-basic" style={style.bgDropdown}>
+          <Popover.Body>
+            <Nav.Link href="/addMusic" style={style.link}>
+              <img alt="" src={AddMusic} style={style.imgAddMusic} />
+              Add Music
+            </Nav.Link>
+            <Nav.Link href="/addArtist" className="mt-4" style={style.link}>
+              <img alt="" src={AddArtist} style={style.imgAddArtist} />
+              Add Artist
+            </Nav.Link>
+          </Popover.Body>
+          <hr style={style.line} />
+          <Popover.Body>
+            <Nav.Link onClick={logout} style={style.link}>
+              <img alt="" src={Logout} style={style.imgLogout} />
+              Logout
+            </Nav.Link>
+          </Popover.Body>
+        </Popover>
+      }
+      style={style.trigger}
+    >
+      <img
+        alt=""
+        src={Profile}
+        className="d-inline-block align-top btn p-0 m-auto"
+        style={style.imgProfile}
+      />
+    </OverlayTrigger>
+  )
+}
 
 export default DropdownAdmin

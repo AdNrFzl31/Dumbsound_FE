@@ -7,7 +7,7 @@ import Navs from "../navbar/Navbar"
 const style = {
   bg: {
     backgroundImage: `url(${Banner})`,
-    // width: "100vw",
+    // width: "100vh",
     height: "500px",
   },
 

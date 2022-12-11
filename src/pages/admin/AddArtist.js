@@ -1,7 +1,10 @@
-import React from "react"
+import React, { useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Button, Col, Container, Form, Row } from "react-bootstrap"
 import Navs from "../../component/navbar/Navbar"
+import { useMutation } from "react-query"
+import { API } from "../../confiq/api"
+import PopUpArtist from "../../component/popup/PopUpArtist"
 
 const style = {
   header: {
@@ -26,25 +29,72 @@ const style = {
 }
 
 function AddArtist() {
+  const [modalShow, setModalShow] = useState(false)
+  // const [preview, setPreview] = useState(null)
+  const [dataArtist, setDataArtist] = useState({
+    name: "",
+    old: 0,
+    artist: "",
+    career: "",
+  })
+
+  const handleOnChange = (e) => {
+    setDataArtist({
+      ...dataArtist,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault()
+
+      // Configuration
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+
+      const data = {
+        name: dataArtist.name,
+        old: parseInt(dataArtist.old),
+        artist: dataArtist.artist,
+        career: dataArtist.career,
+      }
+
+      // Data body
+      const body = JSON.stringify(data)
+
+      // Insert product data
+      const response = await API.post("/artist", body, config)
+      console.log(response)
+
+      // navigate("/addArtist")
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
   return (
     <>
       <Navs />
       <Container className="my-5">
         <h4 className="fw-bold my-4" style={style.header}>
-          Add Music
+          Add Artist
         </h4>
         <Row>
           <Col>
             <Form
-              // onSubmit={(e) => handleSubmit.mutate(e)}
+              onSubmit={(e) => handleSubmit.mutate(e)}
               style={style.formAll}
               className="m-auto mt-3 d-grid gap-2"
             >
               <Form.Group className="mb-3 " controlId="name">
                 <Form.Control
                   // value={dataLogin.name}
-                  // onChange={handleOnChange}
-                  // name="name"
+                  onChange={handleOnChange}
+                  name="name"
                   style={style.form}
                   type="text"
                   placeholder="Name"
@@ -52,26 +102,31 @@ function AddArtist() {
               </Form.Group>
               <Form.Group className="mb-3" controlId="old">
                 <Form.Control
-                  // onChange={handleOnChange}
+                  onChange={handleOnChange}
                   // value={dataLogin.old}
-                  // name="old"
+                  name="old"
                   style={style.form}
-                  type="text"
+                  type="number"
                   placeholder="Old"
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Select style={style.form}>
-                  <option hidden>Singer Group</option>
-                  <option>Solo</option>
-                  <option>Duo</option>
+                <Form.Select
+                  style={style.form}
+                  onChange={handleOnChange}
+                  name="artist"
+                >
+                  <option hidden>Artist Group</option>
+                  <option value="solo">Solo</option>
+                  <option value="duo">Duo</option>
+                  onChange={handleOnChange}
                 </Form.Select>
               </Form.Group>
               <Form.Group className="mb-3" controlId="career">
                 <Form.Control
-                  // onChange={handleOnChange}
+                  onChange={handleOnChange}
                   // value={dataLogin.career}
-                  // name="career"
+                  name="career"
                   style={style.form}
                   type="text"
                   placeholder="Start Career"
@@ -83,6 +138,9 @@ function AddArtist() {
                   className="fw-bold"
                   style={style.bgButton}
                   type="submit"
+                  onClick={() => {
+                    setModalShow(true)
+                  }}
                 >
                   Add Artist
                 </Button>
@@ -91,6 +149,7 @@ function AddArtist() {
           </Col>
         </Row>
       </Container>
+      <PopUpArtist show={modalShow} onHide={() => setModalShow(false)} />
     </>
   )
 }
