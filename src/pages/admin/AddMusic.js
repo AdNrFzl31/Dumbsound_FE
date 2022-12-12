@@ -176,7 +176,7 @@ function AddMusic() {
                     setModalShow(true)
                   }}
                 >
-                  Add Song
+                  Add Music
                 </Button>
               </div>
             </Form>
