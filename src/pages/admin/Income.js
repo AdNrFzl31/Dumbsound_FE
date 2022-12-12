@@ -80,7 +80,7 @@ function Income() {
                   <tr>
                     <th>{number}</th>
                     <th>{element.user.fullname}</th>
-                    <th>{}</th>
+                    <th>30 hari</th>
                     <th>
                       <label style={style.active}>Active</label>
                       <label style={style.notActive}>Not Active</label>
