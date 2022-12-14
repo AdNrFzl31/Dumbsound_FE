@@ -34,7 +34,6 @@ function ListMusic() {
     const response = await API.get("/musics")
     return response.data.data
   })
-  // console.log("data music : ", musics)
 
   const [audioShow, setAudioShow] = useState(false)
   const handleClose = () => setAudioShow(false)
@@ -45,7 +44,6 @@ function ListMusic() {
     setDataAudio(data)
     handleShow()
   }
-  // console.log(dataAudio)
 
   return (
     <div className="my-5 p-0">

@@ -32,16 +32,14 @@ const style = {
 
 function Navs() {
   const [state, dispatch] = useContext(UserContext)
-  // let { data: user } = useQuery("userCache", async () => {
-  //   const response = await API.get("/user/" + state.user.id)
-  //   return response.data.data
-  // })
-  // console.log("data user: ", user)
+
+  let { data: Profile } = useQuery("ProfileCache", async () => {
+    const response = await API.get("/user/" + state.user.id)
+    return response.data.data
+  })
 
   const [showSignin, setShowSignin] = useState(false)
   const [showRegister, setShowRegister] = useState(false)
-
-  // console.log("data state navs : ", state.user)
 
   let navigate = useNavigate()
 

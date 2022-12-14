@@ -33,7 +33,7 @@ function Income() {
   const [state, dispatch] = useContext(UserContext)
   let { data: transall, refetch } = useQuery("TransTable", async () => {
     if (state.user.status === "admin") {
-      const response = await API.get("/transall")
+      const response = await API.get("/transactions")
       return response.data.data
     }
   })
@@ -60,7 +60,6 @@ function Income() {
               <th style={style.headerTable}>Remaining Active</th>
               <th style={style.headerTable}>Status User</th>
               <th style={style.headerTable}>Status Payment</th>
-              <th style={style.headerTable}>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -71,9 +70,8 @@ function Income() {
             ) : (
               transall?.map((element, number) => {
                 number += 1
-                if (element.status === "Success") {
+                if (element.status === "success") {
                   income += element.price
-                  console.log("income : ", element.price)
                 }
 
                 return (
@@ -88,14 +86,11 @@ function Income() {
                     <th>
                       {element.status === "pending" ? (
                         <label style={style.pending}>Pending</label>
-                      ) : element.status === "Success" ? (
+                      ) : element.status === "success" ? (
                         <label style={style.active}>Success</label>
-                      ) : element.status === "Cancel" ? (
+                      ) : element.status === "cancel" ? (
                         <label style={style.notActive}>Cancel</label>
                       ) : null}
-                    </th>
-                    <th>
-                      <DropdownApprove />
                     </th>
                   </tr>
                 )

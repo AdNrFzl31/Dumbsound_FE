@@ -94,7 +94,6 @@ function Signin({ show, onHide, setShowSignin, setShowRegister }) {
         )
         setMessage(alert)
       }
-      console.log("login : ", response)
       setShowSignin(false)
     } catch (error) {
       const alert = (

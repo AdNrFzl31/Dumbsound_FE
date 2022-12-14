@@ -1,35 +1,27 @@
-import React, { useState } from "react"
-import "bootstrap/dist/css/bootstrap.min.css"
-import { Alert, Button, FloatingLabel, Form, Modal } from "react-bootstrap"
-import { Link } from "react-router-dom"
-import { useMutation } from "react-query"
+import React, { useContext, useEffect, useState } from "react"
+import { Alert, Button, Card, FloatingLabel, Form } from "react-bootstrap"
+import Modal from "react-bootstrap/Modal"
+import { useMutation, useQuery } from "react-query"
+import { useNavigate } from "react-router-dom"
 import { API } from "../../confiq/api"
+import { UserContext } from "../../context/UserContext"
 
 const style = {
-  bg: {
-    background: "#161616",
-  },
+  // bg: {
+  //   background: "#161616",
+  // },
 
   header: {
     fontWeight: "900",
-    fontSize: "36px",
+    fontSize: "30px",
     lineHeight: "49px",
     color: "white",
   },
 
-  colorText: {
-    color: "#B1B1B1",
-  },
-
-  bgButton: {
-    color: "white",
-    backgroundColor: "#EE4622",
-  },
-
-  link: {
-    fontWeight: "bold",
-    textDecoration: "none",
-    color: "white",
+  ImgProfile: {
+    position: "relative",
+    width: "150px",
+    height: "180px",
   },
 
   form: {
@@ -50,28 +42,60 @@ const style = {
     color: "#b9b9b9",
     border: "2px solid #D2D2D2",
   },
-}
 
-function Register({ show, onHide, setShowSignin, setShowRegister }) {
-  const title = "Register"
-  document.title = "Waysbucks | " + title
+  bgButton: {
+    color: "white",
+    backgroundColor: "#EE4622",
+  },
+}
+function FormProfile({ show, onHide, setProfileShow }) {
+  const navigate = useNavigate()
+  const [state, dispatch] = useContext(UserContext)
 
   const [message, setMessage] = useState(null)
-  // const [preview, setPreview] = useState(null)
-  const [dataRegis, setDataRegis] = useState({
+
+  const [preview, setPreview] = useState(null)
+  const [profile, setProfile] = useState({})
+  const [dataProfile, setDataProfile] = useState({
     fullname: "",
-    email: "",
-    password: "",
     gender: "",
     phone: "",
     address: "",
+    image: "",
   })
 
+  let { data: Profile, refetch } = useQuery("ProfileCache", async () => {
+    const response = await API.get("/user/" + state.user.id)
+    return response.data.data
+  })
+
+  useEffect(() => {
+    if (Profile) {
+      setPreview(Profile.image)
+      setDataProfile({
+        ...dataProfile,
+        fullname: Profile.fullname,
+        gender: Profile.gender,
+        phone: Profile.phone,
+        address: Profile.address,
+      })
+      setProfile(Profile)
+    }
+  }, [Profile])
+
   const handleOnChange = (e) => {
-    setDataRegis({
-      ...dataRegis,
-      [e.target.name]: e.target.value,
+    setDataProfile({
+      ...dataProfile,
+      [e.target.name]:
+        e.target.type === "file" ? e.target.files : e.target.value,
     })
+
+    // Create image url for preview
+    if (e.target.type === "file") {
+      let url = URL.createObjectURL(e.target.files[0])
+      setPreview(url)
+      // setPhotoProduct(<p className="txt-black">{url}</p>)
+    }
   }
 
   const handleSubmit = useMutation(async (e) => {
@@ -84,11 +108,23 @@ function Register({ show, onHide, setShowSignin, setShowRegister }) {
         },
       }
 
-      const body = JSON.stringify(dataRegis)
+      // const body = JSON.stringify(dataProfile)
+      const formData = new FormData()
+      formData.set("fullname", dataProfile.fullname)
+      formData.set("gender", dataProfile.gender)
+      formData.set("address", dataProfile.address)
+      if (dataProfile.image) {
+        formData.set("image", dataProfile.image[0], dataProfile.image[0]?.name)
+      }
 
-      const response = await API.post("/register", body, config)
-      setShowRegister(false)
-      setShowSignin(true)
+      const response = await API.patch(
+        "/user/" + state.user.id,
+        formData,
+        config
+      )
+
+      refetch()
+      setProfileShow(false)
     } catch (error) {
       const alert = (
         <Alert variant="danger" className="py-1">
@@ -104,39 +140,17 @@ function Register({ show, onHide, setShowSignin, setShowRegister }) {
     <Modal show={show} onHide={onHide} size="md" centered>
       <Modal.Body className="bg-dark">
         <Modal.Title style={style.header} className="mb-3">
-          Register
+          Update Profile
         </Modal.Title>
         {message && message}
         <Form
           onSubmit={(e) => handleSubmit.mutate(e)}
           className="w-100 m-auto mt-3 d-grid gap-2"
         >
-          <Form.Group className="mb-3 " controlId="email">
-            <Form.Control
-              onChange={handleOnChange}
-              // value={dataRegister.email}
-              name="email"
-              style={style.form}
-              type="email"
-              placeholder="Email"
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="password">
-            <Form.Control
-              onChange={handleOnChange}
-              // value={dataRegister.password}
-              name="password"
-              style={style.form}
-              type="password"
-              placeholder="Password"
-              required
-            />
-          </Form.Group>
           <Form.Group className="mb-3" controlId="fullname">
             <Form.Control
               onChange={handleOnChange}
-              // value={dataRegister.fullname}
+              value={dataProfile?.fullname}
               name="fullname"
               style={style.form}
               type="text"
@@ -149,6 +163,7 @@ function Register({ show, onHide, setShowSignin, setShowRegister }) {
               style={style.form}
               aria-label="Default select example"
               onChange={handleOnChange}
+              value={dataProfile?.gender}
               name="gender"
             >
               <option hidden>Gender</option>
@@ -160,7 +175,7 @@ function Register({ show, onHide, setShowSignin, setShowRegister }) {
           <Form.Group className="mb-3" controlId="phone">
             <Form.Control
               onChange={handleOnChange}
-              // value={dataRegister.phone}
+              value={dataProfile?.phone}
               name="phone"
               style={style.form}
               type="number"
@@ -175,38 +190,42 @@ function Register({ show, onHide, setShowSignin, setShowRegister }) {
           >
             <Form.Control
               onChange={handleOnChange}
-              // value={DataPay.address}
+              value={dataProfile?.address}
               name="address"
               as="textarea"
               placeholder="Address"
               style={style.formTextarea}
             />
           </FloatingLabel>
+          {preview && (
+            <Card.Img
+              variant="top"
+              src={preview}
+              alt={preview}
+              style={style.ImgProfile}
+            />
+          )}
+          <Form.Group className="mb-3" controlId="phone">
+            <Form.Control
+              onChange={handleOnChange}
+              name="image"
+              style={style.form}
+              type="file"
+              placeholder="Image"
+            />
+          </Form.Group>
           <Button
             variant="outline-none"
             className="fw-bold"
             style={style.bgButton}
             type="submit"
           >
-            Register
+            Update Profile
           </Button>
-          <Form.Label style={style.colorText} className="text-center">
-            Don't have an account ? Klik
-            <Link
-              className="ms-1"
-              onClick={() => {
-                setShowRegister(false)
-                setShowSignin(true)
-              }}
-              style={style.link}
-            >
-              Here
-            </Link>
-          </Form.Label>
         </Form>
       </Modal.Body>
     </Modal>
   )
 }
 
-export default Register
+export default FormProfile

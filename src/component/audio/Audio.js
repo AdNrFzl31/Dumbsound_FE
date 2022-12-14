@@ -10,12 +10,25 @@ import { useQuery } from "react-query"
 import { API } from "../../confiq/api"
 
 const style = {
+  bgModal: {
+    backgroundColor: "#AEAFB0",
+  },
+
   imgMusic: {
     width: "60px",
     height: "60px",
     borderRadius: "50%",
     objectFit: "cover",
     // border: "2px solid #bd0707",
+  },
+
+  title: {
+    color: "white",
+  },
+
+  audio: {
+    backgroundColor: "#AEAFB0",
+    border: "none",
   },
 }
 
@@ -28,11 +41,11 @@ function Audio({ show, onHide, dataAudio }) {
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >
-      <Modal.Body>
+      <Modal.Body style={style.bgModal}>
         <Stack direction="horizontal" gap={3}>
           <img alt="" src={dataAudio?.tumbnail} style={style.imgMusic} />
           <Stack direction="vertical">
-            <p>
+            <p className=" mb-1">
               {dataAudio?.title} - {dataAudio?.artist.name}
             </p>
             <Stack direction="horizontal">
@@ -40,6 +53,7 @@ function Audio({ show, onHide, dataAudio }) {
                 autoPlay
                 src={dataAudio?.music}
                 layout="horizontal"
+                style={style.audio}
                 className="player"
               />
             </Stack>

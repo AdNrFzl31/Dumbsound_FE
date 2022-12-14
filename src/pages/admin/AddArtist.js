@@ -68,7 +68,6 @@ function AddArtist() {
 
       // Insert product data
       const response = await API.post("/artist", body, config)
-      console.log(response)
 
       // navigate("/addArtist")
     } catch (error) {

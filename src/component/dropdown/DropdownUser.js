@@ -1,10 +1,14 @@
-import React from "react"
+import React, { useContext } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Nav, OverlayTrigger, Popover } from "react-bootstrap"
-import Profile from "../../asset/image/Profile1.png"
+import ImgProfile from "../../asset/image/profile.png"
+import User from "../../asset/image/icon/user.png"
 import Pay from "../../asset/image/icon/bill.png"
 import Logout from "../../asset/image/icon/logout.png"
 import { useNavigate } from "react-router-dom"
+import { useQuery } from "react-query"
+import { API } from "../../confiq/api"
+import { UserContext } from "../../context/UserContext"
 
 const style = {
   bgDropdown: {
@@ -42,12 +46,18 @@ const style = {
     height: "60px",
     borderRadius: "50%",
     objectFit: "cover",
-    border: "1px solid #FFFFFF",
+    border: "3px solid #EE4622",
   },
 }
 
 function DropdownUser({ logout }) {
-  let navigate = useNavigate()
+  const [state] = useContext(UserContext)
+
+  let { data: Profile } = useQuery("ProfileCache", async () => {
+    const response = await API.get("/user/" + state.user.id)
+    return response.data.data
+  })
+
   return (
     <OverlayTrigger
       trigger="click"
@@ -55,6 +65,10 @@ function DropdownUser({ logout }) {
       overlay={
         <Popover id="popover-basic" style={style.bgDropdown}>
           <Popover.Body>
+            <Nav.Link href="/profile" className="mb-4" style={style.link}>
+              <img alt="" src={User} style={style.imgPay} />
+              Profile
+            </Nav.Link>
             <Nav.Link href="/pay" style={style.link}>
               <img alt="" src={Pay} style={style.imgPay} />
               Pay
@@ -72,8 +86,8 @@ function DropdownUser({ logout }) {
       style={style.trigger}
     >
       <img
-        alt=""
-        src={Profile}
+        alt={Profile?.image === "" ? ImgProfile : Profile?.image}
+        src={Profile?.image === "" ? ImgProfile : Profile?.image}
         className="d-inline-block align-top btn p-0 m-auto"
         style={style.imgProfile}
       />

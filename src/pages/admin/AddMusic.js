@@ -5,6 +5,7 @@ import Navs from "../../component/navbar/Navbar"
 import { useMutation, useQuery } from "react-query"
 import PopUpMusic from "../../component/popup/PopUpMusic"
 import { API } from "../../confiq/api"
+import { Navigate, useNavigate } from "react-router-dom"
 
 const style = {
   header: {
@@ -81,10 +82,8 @@ function AddMusic() {
       )
       formData.set("music", DataMusic.music[0], DataMusic.music[0].name)
 
-      console.log("data music : ", DataMusic)
       // Insert product data
       const response = await API.post("/music", formData, config)
-      console.log("data response : ", response)
 
       // navigate("/add-product")
     } catch (error) {
@@ -93,6 +92,12 @@ function AddMusic() {
   })
 
   const [modalShow, setModalShow] = useState(false)
+  const navigate = useNavigate()
+
+  const handleClose = () => {
+    setModalShow(false)
+    navigate("/lisMusic")
+  }
 
   return (
     <>
@@ -109,7 +114,7 @@ function AddMusic() {
               className="m-auto mt-3 d-grid gap-2"
             >
               <Row>
-                <Col xs={10}>
+                <Col xs={7}>
                   <Form.Group className="mb-3 " controlId="title">
                     <Form.Control
                       // value={dataLogin.title}
@@ -119,6 +124,28 @@ function AddMusic() {
                       type="text"
                       placeholder="Title"
                     />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="year">
+                    <Form.Control
+                      onChange={handleOnChange}
+                      // value={dataLogin.year}
+                      name="year"
+                      style={style.form}
+                      type="number"
+                      placeholder="Year"
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Select
+                      style={style.form}
+                      onChange={handleOnChange}
+                      name="artistId"
+                    >
+                      <option hidden>Artist</option>
+                      {artists?.map((artist) => (
+                        <option value={artist.id}>{artist.name}</option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                 </Col>
                 <Col>
@@ -134,28 +161,7 @@ function AddMusic() {
                   </Form.Group>
                 </Col>
               </Row>
-              <Form.Group className="mb-3" controlId="year">
-                <Form.Control
-                  onChange={handleOnChange}
-                  // value={dataLogin.year}
-                  name="year"
-                  style={style.form}
-                  type="number"
-                  placeholder="Year"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Select
-                  style={style.form}
-                  onChange={handleOnChange}
-                  name="artistId"
-                >
-                  <option hidden>Artist</option>
-                  {artists?.map((artist) => (
-                    <option value={artist.id}>{artist.name}</option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+
               <Form.Group className="mb-3" controlId="music">
                 <Form.Control
                   onChange={handleOnChange}
@@ -183,7 +189,7 @@ function AddMusic() {
           </Col>
         </Row>
       </Container>
-      <PopUpMusic show={modalShow} onHide={() => setModalShow(false)} />
+      <PopUpMusic show={modalShow} onHide={handleClose} />
     </>
   )
 }

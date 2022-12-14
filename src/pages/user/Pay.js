@@ -48,29 +48,24 @@ function Pay() {
 
   const getTrans = async () => {
     try {
-      const response = await API.get("/transall")
+      const response = await API.get("/transactions")
       const responbyid = response?.data.data.filter((p) => p.user.id === id)
-      console.log("byiid", responbyid)
       setTrans(responbyid)
     } catch (error) {
       console.log(error)
     }
   }
-  console.log(trans, "okeeeeeeeee")
   useEffect(() => {
     getTrans()
   }, [state])
-  console.log("state:", state)
 
   const HandlePay = useMutation(async (e) => {
     try {
       e.preventDefault()
 
       const response = await API.post("/transaction")
-      console.log("Transaction : ", response)
 
       const token = response.data.data.token
-      console.log(token)
 
       window.snap.pay(token, {
         onSuccess: function (result) {
@@ -92,8 +87,6 @@ function Pay() {
           alert("you closed the popup without finishing the payment")
         },
       })
-
-      console.log("Transaksi", response)
     } catch (error) {
       console.log(error)
     }

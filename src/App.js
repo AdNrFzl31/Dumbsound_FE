@@ -11,6 +11,11 @@ import AddArtist from "./pages/admin/AddArtist"
 import Navs from "./component/navbar/Navbar"
 import { UserContext } from "./context/UserContext"
 import { API, setAuthToken } from "./confiq/api"
+import Profile from "./pages/Profile"
+import ListArtistAdmin from "./pages/admin/ListArtist"
+import ListMusicAdmin from "./pages/admin/ListMusic"
+import UpdateMusic from "./pages/admin/UpdateMusic"
+import UpdateArtist from "./pages/admin/UpdateArtist"
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -43,8 +48,6 @@ function App() {
         })
       }
 
-      console.log("response check auth", response)
-
       let payload = response.data.data
       payload.token = localStorage.token
 
@@ -52,7 +55,6 @@ function App() {
         type: "USER_SUCCESS",
         payload,
       })
-      console.log("ini data state", state)
       setIsLoading(false)
     } catch (error) {
       console.log(error)
@@ -71,9 +73,14 @@ function App() {
           {/* <Navs /> */}
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/pay" element={<Pay />} />
             <Route path="/addMusic" element={<AddMusic />} />
+            <Route path="/updateMusic/:id" element={<UpdateMusic />} />
+            <Route path="/listMusic" element={<ListMusicAdmin />} />
             <Route path="/addArtist" element={<AddArtist />} />
+            <Route path="/updateArtist/:id" element={<UpdateArtist />} />
+            <Route path="/listArtist" element={<ListArtistAdmin />} />
           </Routes>
         </>
       )}
