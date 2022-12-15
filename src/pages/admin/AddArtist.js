@@ -5,6 +5,7 @@ import Navs from "../../component/navbar/Navbar"
 import { useMutation } from "react-query"
 import { API } from "../../confiq/api"
 import PopUpArtist from "../../component/popup/PopUpArtist"
+import { useNavigate } from "react-router-dom"
 
 const style = {
   header: {
@@ -29,7 +30,12 @@ const style = {
 }
 
 function AddArtist() {
+  const navigate = useNavigate()
   const [modalShow, setModalShow] = useState(false)
+  const handleClose = () => {
+    setModalShow(false)
+    navigate("/listArtist")
+  }
   // const [preview, setPreview] = useState(null)
   const [dataArtist, setDataArtist] = useState({
     name: "",
@@ -148,7 +154,7 @@ function AddArtist() {
           </Col>
         </Row>
       </Container>
-      <PopUpArtist show={modalShow} onHide={() => setModalShow(false)} />
+      <PopUpArtist show={modalShow} onHide={handleClose} />
     </>
   )
 }

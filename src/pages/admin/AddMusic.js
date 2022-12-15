@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
-import { Button, Col, Container, Form, Row } from "react-bootstrap"
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap"
 import Navs from "../../component/navbar/Navbar"
 import { useMutation, useQuery } from "react-query"
 import PopUpMusic from "../../component/popup/PopUpMusic"
@@ -96,39 +96,55 @@ function AddMusic() {
 
   const handleClose = () => {
     setModalShow(false)
-    navigate("/lisMusic")
+    navigate("/listMusic")
   }
 
   return (
     <>
       <Navs />
       <Container className="my-5">
-        <h4 className="fw-bold my-4" style={style.header}>
-          Add Music
-        </h4>
         <Row>
-          <Col>
+          <Col xs={9}>
+            <h4 className="fw-bold my-4" style={style.header}>
+              Add Music
+            </h4>
             <Form
               onSubmit={(e) => handleSubmit.mutate(e)}
               style={style.formAll}
               className="m-auto mt-3 d-grid gap-2"
             >
               <Row>
-                <Col xs={7}>
-                  <Form.Group className="mb-3 " controlId="title">
-                    <Form.Control
-                      // value={dataLogin.title}
-                      onChange={handleOnChange}
-                      name="title"
-                      style={style.form}
-                      type="text"
-                      placeholder="Title"
-                    />
-                  </Form.Group>
+                <Col>
+                  <Row>
+                    <Col xs={7}>
+                      <Form.Group className="mb-3 " controlId="title">
+                        <Form.Control
+                          // value={dataMusic?.title}
+                          onChange={handleOnChange}
+                          name="title"
+                          style={style.form}
+                          type="text"
+                          placeholder="Title"
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group className="mb-3" controlId="tumbnail">
+                        <Form.Control
+                          onChange={handleOnChange}
+                          // value={dataMusic?.image}
+                          name="tumbnail"
+                          style={style.form}
+                          type="file"
+                          placeholder="Tumbnail"
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
                   <Form.Group className="mb-3" controlId="year">
                     <Form.Control
                       onChange={handleOnChange}
-                      // value={dataLogin.year}
+                      // value={dataMusic?.year}
                       name="year"
                       style={style.form}
                       type="number"
@@ -139,6 +155,7 @@ function AddMusic() {
                     <Form.Select
                       style={style.form}
                       onChange={handleOnChange}
+                      // value={dataMusic?.artistId}
                       name="artistId"
                     >
                       <option hidden>Artist</option>
@@ -147,35 +164,23 @@ function AddMusic() {
                       ))}
                     </Form.Select>
                   </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className="mb-3" controlId="tumbnail">
+                  <Form.Group className="mb-3" controlId="music">
                     <Form.Control
                       onChange={handleOnChange}
-                      // value={dataLogin.image}
-                      name="tumbnail"
+                      // value={dataLogin.music}
+                      name="music"
                       style={style.form}
                       type="file"
-                      placeholder="Tumbnail"
+                      placeholder="Music"
                     />
                   </Form.Group>
                 </Col>
               </Row>
 
-              <Form.Group className="mb-3" controlId="music">
-                <Form.Control
-                  onChange={handleOnChange}
-                  // value={dataLogin.music}
-                  name="music"
-                  style={style.form}
-                  type="file"
-                  placeholder="Music"
-                />
-              </Form.Group>
               <div className="d-flex justify-content-center">
                 <Button
                   variant="outline-none"
-                  className="fw-bold"
+                  className="fw-bold w-100 mx-3"
                   style={style.bgButton}
                   type="submit"
                   onClick={() => {
@@ -186,6 +191,17 @@ function AddMusic() {
                 </Button>
               </div>
             </Form>
+          </Col>
+          <Col>
+            {preview && (
+              <Card.Img
+                variant="top"
+                src={preview}
+                alt={preview}
+                className="mt-5"
+                style={style.ImgProfile}
+              />
+            )}
           </Col>
         </Row>
       </Container>

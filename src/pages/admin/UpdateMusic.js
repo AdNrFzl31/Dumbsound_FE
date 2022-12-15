@@ -142,7 +142,7 @@ function UpdateMusic({ setUpdateShow }) {
       const response = await API.patch("/music/" + id, formData, config)
 
       refetch()
-      navigate("/updateMusic")
+      navigate("/listMusic")
     } catch (error) {
       const alert = (
         <Alert variant="danger" className="py-1">
@@ -242,7 +242,7 @@ function UpdateMusic({ setUpdateShow }) {
                   //   setModalShow(true)
                   // }}
                 >
-                  Add Music
+                  Update Music
                 </Button>
               </div>
             </Form>
